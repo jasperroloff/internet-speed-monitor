@@ -3,8 +3,9 @@ import csv
 
 from pushbullet import Pushbullet
 
-# pushbullet API token
-access_token = ''
+# read pushbullet API token from pushbullet_token.txt
+with open('pushbullet_token.txt') as token_txt:
+    access_token = token_txt.readline()
 
 # min download bandwith (bit/s)
 download_min = 75000000
@@ -16,7 +17,7 @@ upload_min = 25000000
 ping_max = 30
 
 # disable in production
-test_run = False
+test_run = True
 
 servers = []
 s = speedtest.Speedtest()
