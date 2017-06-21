@@ -1,5 +1,6 @@
 import speedtest
 import csv
+import datetime
 
 from pushbullet import Pushbullet
 
@@ -17,7 +18,7 @@ upload_min = 25000000
 ping_max = 30
 
 # disable in production
-test_run = True
+test_run = False
 
 servers = []
 s = speedtest.Speedtest()
@@ -30,10 +31,14 @@ share_url = s.results.share()[:-4]
 
 if s.results.download < download_min or s.results.upload < upload_min or s.results.ping > ping_max or test_run:
     pb = Pushbullet(api_key=access_token)
-    push = pb.push_link("Internet Bandwidth Warning",
+    push = pb.push_link("Internet Speed Warning",
                         share_url,
-                        "down: %d Mb/s\nup: %d Mb/s\nping: %d ms\n" %
-                        (s.results.download/1000000, s.results.upload/1000000, s.results.ping))
+                        "date:\t{:%Y-%m-%d}\n".format(datetime.datetime.now()) +
+                        "time:\t{:%H-%M}\n".format(datetime.datetime.now()) +
+                        "down:\t%d Mb/s\n" % (s.results.download/1000000) +
+                        "up:\t\t%d Mb/s\n" % (s.results.upload/1000000) +
+                        "ping:\t%d ms\n" % s.results.ping
+                        )
 
 results_dict = s.results.dict()
 
